@@ -1,19 +1,43 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 
 import reflex as rx
-
+import typing
 from rxconfig import config
-
-
 class State(rx.State):
-    """The app state."""
-
-    ...
-
-
+    
+    def print(self, to_print = "AA"):
+        print("PRINT")
+        print(to_print)
+    def get_enter(self, _):
+        return rx.call_script("enter", callback=self.print)
+@rx.page(
+    on_load=rx.call_script(
+        """
+        globalThis.enter = ""
+        window.addEventListener('keyup',
+            function(e){
+                if (e.code === "Enter") {
+                    globalThis.enter = e.code;
+                }
+            },
+        false);
+        window.addEventListener('keydown',
+            function(e){
+                alert(globalThis.enter);
+            },
+        false);
+        """
+    ),
+)
 def index() -> rx.Component:
     # Welcome Page (Index)
     return rx.box(
+        rx.moment(
+            on_change=State.get_enter,
+            visibility="hidden",
+            interval=30,
+            # on_mount=rx.call_script('var enter = "";')
+        ),
         rx.image(
             src="/gamedblogo.svg",
             position="absolute",
@@ -31,16 +55,20 @@ def index() -> rx.Component:
                     width="100%"
                 ),
                 rx.center(
+                    rx.link(
+                        rx.icon(
+                            "search",
+                            size=50
+                        ),
+                        as_child=True
+                    ),
                     
-                    rx.icon(
-                        "search",
-                        size=83
-                    ) ,
-                    width="11.2vh",
-                    height="100%",
-                    padding="0.521vw"
+                    width="auto",
+                    height="11.2vh",
+                    padding="1vw"
                     
-                )
+                ),
+                spacing="0"
             ),
             
             position="absolute",
@@ -48,7 +76,7 @@ def index() -> rx.Component:
             height="11.2vh",
             left="32.604vw",
             top="44.4vh",
-            border="1px solid #CEC8D4"
+            border="0.109vh solid #CEC8D4"
         ),
         
         rx.box(
@@ -85,22 +113,26 @@ def card(_) -> rx.Component:
     rx.box(
         width="12.5vw",
         height="43.199vh",
-        border="1px solid #CEC8D4"
+        border="0.109vh solid #CEC8D4"
     ),  
 def search() -> rx.Component:
     return rx.box(
-        rx.image(
-            src="/gamedblogo.svg",
-            position="absolute",
-            
-            left="7px",
-            top="24px",
-            width="655px",
-            height="122px"
+        rx.link(
+            rx.image(
+                src="/gamedblogo.svg",
+                position="absolute",
+                
+                left="0.3vw",
+                top="2.5vh",
+                width="35vw",
+                height="13.3vh"
+            ),
+            href="/"
         ),
+        
         rx.hstack(
             rx.input(
-                font_size="60px",
+                font_size="6.5vh",
                 height="11.2vh",
                 width="100%"
             ),
@@ -112,15 +144,15 @@ def search() -> rx.Component:
                 ) ,
                 width="11.2vh",
                 height="100%",
-                padding="10px"
+                padding="1vh"
                 
             ),
             left="35vw",
-            top="37px",
+            top="4vh",
             position="absolute",
-            border="1px solid #CEC8D4",
+            border="0.109vh solid #CEC8D4",
             height="11.2vh",
-            width="62.969"
+            width="63vw"
         ),
         rx.grid(
             rx.foreach(
@@ -135,25 +167,26 @@ def search() -> rx.Component:
                     rx.vstack(
                         rx.text(
                             "Super Smash Bros.",
-                            font_size="20px",
+                            font_size="2.2vh",
                             font_weight="bold",
                         ),
                         rx.text(
                             "Wii/N64",
-                            font_size="20px",
+                            font_size="2.2vh",
                         ),
                         rx.text(
                             "1999",
-                            font_size="20px",
+                            font_size="2.2vh",
                         ),
                         width="11vw",
                         height="8.7vh",
+                        spacing="0"
                         
                     ),
                     padding="0.833vw",
                     width="12.5vw",
-                    height="43.2vh",
-                    border="1px solid #CEC8D4"
+                    height="48vh",
+                    border="0.109vh solid #CEC8D4"
                 ),  
             ),
             position="absolute",
