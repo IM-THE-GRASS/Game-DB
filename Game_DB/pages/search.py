@@ -1,8 +1,39 @@
 import reflex as rx
 from Game_DB.state import State
 
-
-
+def card(info):
+    return rx.vstack(
+        rx.image(
+            src="https://cloud-mdyzmeysm-hack-club-bot.vercel.app/0og.png",
+            width="100%",
+            height="27vh",
+            object_fit="contain"
+        ),
+        rx.vstack(
+            rx.text(
+                info["name"],
+                font_size="2.2vh",
+                font_weight="bold",
+            ),
+            rx.text(
+                "Wii/N64",
+                font_size="2.2vh",
+            ),
+            rx.text(
+                "1999",
+                font_size="2.2vh",
+            ),
+            width="11vw",
+            height="8.7vh",
+            spacing="0"
+            
+        ),
+        padding="0.833vw",
+        width="12.5vw",
+        height="48vh",
+        border="0.109vh solid #CEC8D4"
+    )
+@rx.page(on_load=State.get_search_results)
 def search() -> rx.Component:
     return rx.box(
         rx.link(
@@ -49,38 +80,8 @@ def search() -> rx.Component:
         ),
         rx.grid(
             rx.foreach(
-                rx.Var.range(14),
-                lambda i: rx.vstack(
-                    rx.image(
-                        src="https://cloud-mdyzmeysm-hack-club-bot.vercel.app/0og.png",
-                        width="100%",
-                        height="27vh",
-                        object_fit="contain"
-                    ),
-                    rx.vstack(
-                        rx.text(
-                            "Super Smash Bros.",
-                            font_size="2.2vh",
-                            font_weight="bold",
-                        ),
-                        rx.text(
-                            "Wii/N64",
-                            font_size="2.2vh",
-                        ),
-                        rx.text(
-                            "1999",
-                            font_size="2.2vh",
-                        ),
-                        width="11vw",
-                        height="8.7vh",
-                        spacing="0"
-                        
-                    ),
-                    padding="0.833vw",
-                    width="12.5vw",
-                    height="48vh",
-                    border="0.109vh solid #CEC8D4"
-                ),  
+                State.search_results,
+                card  
             ),
             position="absolute",
             left="3vw",
