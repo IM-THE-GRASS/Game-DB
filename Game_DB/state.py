@@ -24,16 +24,28 @@ class State(rx.State):
             }
         )
         return response.json()
-    def get_img(self, game_id):
-        return "https:" + self.get_from_api("artworks", "f *; where game = 18158; l 50;")[0]["url"].replace("thumb", "screenshot_big")
         
     def get_search_results(self):
-        self.search_results = self.get_from_api("games", f'f name, involved_companies; search "{self.search_value}"; where version_parent = null;')
-        print(self.get_img(1))
+        response = self.get_from_api("games", f'f *; search "{self.search_value}"; where version_parent = null;')
+        for result in response:
+            print(result)
+            try:
+                cover_response = self.get_from_api("covers", f"f *; where id = {result['cover']};")
+                url = "https:" + cover_response[0]["url"]
+                url = url.replace("thumb", "cover_big")
+            except:pass
+            platforms = self.get_from_api("platforms", f"f *; where id = {result['platforms'][0]};")
+            result["platform"] = platforms[0]["abbreviation"]
+            print(platforms)
+            result["img"] = url
+        self.search_results = response
     
     def submit_search(self):
         if self.search_focus:
-            return rx.redirect(f"/search")
+            return rx.redirect(f"/search?{self.search_value}")
+    def submit_search2(self):
+        if self.search_focus:
+            self.get_search_results()
     def on_search_focus(self):
         self.search_focus = True
     def on_search_unfocus(self):

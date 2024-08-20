@@ -1,10 +1,10 @@
 import reflex as rx
 from Game_DB.state import State
-
+from Game_DB.components.keybind import Keybind
 def card(info):
     return rx.vstack(
         rx.image(
-            src="https://cloud-mdyzmeysm-hack-club-bot.vercel.app/0og.png",
+            src=info["img"],
             width="100%",
             height="27vh",
             object_fit="contain"
@@ -16,7 +16,7 @@ def card(info):
                 font_weight="bold",
             ),
             rx.text(
-                "Wii/N64",
+                info["platform"],
                 font_size="2.2vh",
             ),
             rx.text(
@@ -36,6 +36,10 @@ def card(info):
 @rx.page(on_load=State.get_search_results)
 def search() -> rx.Component:
     return rx.box(
+        Keybind(
+            keys=["Enter"],
+            bind=lambda key:State.submit_search2(),
+        ),
         rx.link(
             rx.image(
                 src="/gamedblogo.svg",
@@ -66,7 +70,7 @@ def search() -> rx.Component:
                 width="11.2vh",
                 height="100%",
                 padding="1vh",
-                on_click=State.submit_search
+                on_click=State.submit_search2
                 
             ),
             left="35vw",
