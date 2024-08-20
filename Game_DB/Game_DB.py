@@ -3,40 +3,24 @@
 import reflex as rx
 import typing
 from rxconfig import config
+from Game_DB.components.keybind import Keybind
 class State(rx.State):
     
     def print(self, to_print = "AA"):
         print("PRINT")
         print(to_print)
-    def get_enter(self, _):
-        return rx.call_script("enter", callback=self.print)
-@rx.page(
-    on_load=rx.call_script(
-        """
-        globalThis.enter = ""
-        window.addEventListener('keyup',
-            function(e){
-                if (e.code === "Enter") {
-                    globalThis.enter = e.code;
-                }
-            },
-        false);
-        window.addEventListener('keydown',
-            function(e){
-                alert(globalThis.enter);
-            },
-        false);
-        """
-    ),
-)
+
+
+
+
+
+
 def index() -> rx.Component:
     # Welcome Page (Index)
     return rx.box(
-        rx.moment(
-            on_change=State.get_enter,
-            visibility="hidden",
-            interval=30,
-            # on_mount=rx.call_script('var enter = "";')
+        Keybind(
+            keys=["Enter"],
+            bind=State.print,
         ),
         rx.image(
             src="/gamedblogo.svg",
