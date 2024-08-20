@@ -5,10 +5,21 @@ import typing
 from rxconfig import config
 from Game_DB.components.keybind import Keybind
 class State(rx.State):
+    search_value:str = ""
+    search_focus:bool = False
     
-    def print(self, to_print = "AA"):
-        print("PRINT")
-        print(to_print)
+    def submit_search(self):
+        if self.search_focus:
+            return rx.redirect(f"/search?query={self.search_value}")
+    def on_search_focus(self):
+        self.search_focus = True
+    def on_search_unfocus(self):
+        self.search_focus = False
+    def on_search_change(self, new):
+        self.search_value = new
+    def print(self):
+        print("AAA")
+    
 
 
 
@@ -20,7 +31,7 @@ def index() -> rx.Component:
     return rx.box(
         Keybind(
             keys=["Enter"],
-            bind=State.print,
+            bind=lambda key:State.submit_search(),
         ),
         rx.image(
             src="/gamedblogo.svg",
@@ -36,7 +47,9 @@ def index() -> rx.Component:
                 rx.input(
                     font_size="6.5vh",
                     height="11.2vh",
-                    width="100%"
+                    width="100%",
+                    value=State.search_value,
+                    on_change=State.on_search_change,
                 ),
                 rx.center(
                     rx.link(
@@ -46,12 +59,14 @@ def index() -> rx.Component:
                         ),
                         as_child=True
                     ),
-                    
+                    on_click=State.submit_search,
                     width="auto",
                     height="11.2vh",
                     padding="1vw"
                     
                 ),
+                on_focus=State.on_search_focus,
+                on_blur=State.on_search_unfocus,
                 spacing="0"
             ),
             
@@ -118,7 +133,9 @@ def search() -> rx.Component:
             rx.input(
                 font_size="6.5vh",
                 height="11.2vh",
-                width="100%"
+                width="100%",
+                value=State.search_value,
+                on_change=State.on_search_change
             ),
             rx.center(
                 
@@ -128,7 +145,8 @@ def search() -> rx.Component:
                 ) ,
                 width="11.2vh",
                 height="100%",
-                padding="1vh"
+                padding="1vh",
+                on_click=State.submit_search
                 
             ),
             left="35vw",
@@ -136,7 +154,9 @@ def search() -> rx.Component:
             position="absolute",
             border="0.109vh solid #CEC8D4",
             height="11.2vh",
-            width="63vw"
+            width="63vw",
+            on_blur=State.on_search_unfocus,
+            on_focus=State.on_search_focus
         ),
         rx.grid(
             rx.foreach(
