@@ -16,8 +16,26 @@ class State(rx.State):
     search_results:list[dict[str, str]] = []
     search_sort:str
     search_sort_order:str
+    sort_order_disabled:bool = True
     loading:bool
     stop_thread:bool
+    sort_order_options = [
+        {
+            "value":"asc",
+            "label":"Ascending"
+        },
+        {
+            "value":"desc",
+            "label":"Decending"
+        }
+    ]
+    sort_options = [
+        {
+            "value":"first_release_date",
+            "label":"Release date"
+        }
+    ]      
+    
     @rx.var()
     def search_disabled(self) -> bool:
         return self.search_sort or self.search_sort_order
@@ -103,16 +121,30 @@ class State(rx.State):
             self.search_value = new
     def print(self,_):
         self.search_results = self.search_results
+        print(self.search_sort)
+        print(self.search_sort_order)
+        if self.sort_order_disabled:
+            self.search_sort_order = ""
     def test(self, _):
         print(_)
     def set_sort_order(self, new):
         try:
             self.search_sort_order = new["value"]
         except:
-            pass
+            self.search_sort_order = ""
+        
     def set_sort(self, new):
         try:
             self.search_sort = new["value"]
+            self.sort_order_disabled = False
         except:
-            pass
+            self.sort_order_disabled = True
+            self.search_sort = ""
+            time.sleep(1)
+            self.sort_order_options = [
+                {
+                    "value":"dog",
+                    "label":"dog"
+                }
+            ]
         

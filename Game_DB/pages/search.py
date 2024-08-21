@@ -65,12 +65,7 @@ def search() -> rx.Component:
         ),
         rx.hstack(
             select(
-                options = [
-                    {
-                        "value":"first_release_date",
-                        "label":"Release date"
-                    },
-                ],            
+                options = State.sort_options,      
                 onChange=State.set_sort,
                 width="100%",
                 isSearchable=False,
@@ -78,20 +73,12 @@ def search() -> rx.Component:
                 placeholder = "Sort for"
             ),
             select(
-                options = [
-                    {
-                        "value":"asc",
-                        "label":"Ascending"
-                    },
-                    {
-                        "value":"desc",
-                        "label":"Decending"
-                    }
-                ],            
+                options = State.sort_order_options,          
                 onChange=State.set_sort_order,
                 width="100%",
                 isSearchable=False,
                 isClearable=True,
+                isDisabled=State.sort_order_disabled,
                 placeholder="Sort order"
                 
             ),
