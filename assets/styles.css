@@ -35,3 +35,7 @@
 .css-1dimb5e-singleValue {
     color: hsl(0, 0%, 80%) !important;
 }
+.css-tr4s17-option {
+    background-color: rgba(17, 17, 19, 01) !important;
+    border: 0.109vh solid #444444;
+}

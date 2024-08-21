@@ -1,6 +1,7 @@
 import reflex as rx
 from Game_DB.state import State
 from Game_DB.components.keybind import Keybind
+
 class Select(rx.Component):
     library = "react-select"
     tag = "Select"
@@ -35,7 +36,7 @@ def card(info):
                 font_size="2.2vh",
             ),
             rx.text(
-                "1999",
+                info["year"],
                 font_size="2.2vh",
             ),
             width="11vw",
@@ -66,18 +67,14 @@ def search() -> rx.Component:
             select(
                 options = [
                     {
-                        "value":"asc",
-                        "label":"Ascending"
+                        "value":"first_release_date",
+                        "label":"Release date"
                     },
-                    {
-                        "value":"desc",
-                        "label":"Decending"
-                    }
                 ],            
-                onChange=State.test,
+                onChange=State.set_sort,
                 width="100%",
                 isSearchable=False,
-                isClearable=False,
+                isClearable=True,
                 placeholder = "Sort for"
             ),
             select(
@@ -91,11 +88,12 @@ def search() -> rx.Component:
                         "label":"Decending"
                     }
                 ],            
-                onChange=State.test,
+                onChange=State.set_sort_order,
                 width="100%",
                 isSearchable=False,
-                isClearable=False,
+                isClearable=True,
                 placeholder="Sort order"
+                
             ),
             position="absolute",
             left="3vw",
@@ -117,13 +115,27 @@ def search() -> rx.Component:
         ),
         
         rx.hstack(
-            rx.input(
-                font_size="6.5vh",
-                height="11.2vh",
-                width="100%",
-                value=State.search_value,
-                on_change=State.on_search_change
+            rx.cond(
+                State.search_disabled,
+                rx.input(
+                    font_size="6.5vh",
+                    height="11.2vh",
+                    width="100%",
+                    value="You can't use both search and sort!",
+                    on_change=State.on_search_change,
+                    disabled=State.search_disabled
+                ),
+                rx.input(
+                    font_size="6.5vh",
+                    height="11.2vh",
+                    width="100%",
+                    value=State.search_value,
+                    on_change=State.on_search_change,
+                    disabled=State.search_disabled
+                ),
+                
             ),
+            
             rx.center(
                 
                 rx.icon(
