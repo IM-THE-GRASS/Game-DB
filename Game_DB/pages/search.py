@@ -12,6 +12,7 @@ class Select(rx.Component):
     isSearchable:rx.Var[bool]
     onChange: rx.EventHandler[lambda newValue: [newValue]]
     unstyled:rx.Var[bool]
+    placeholder:rx.Var[str]
 
 
 select = Select.create
@@ -65,40 +66,42 @@ def search() -> rx.Component:
             select(
                 options = [
                     {
-                        "value":"value",
-                        "label":"label"
+                        "value":"asc",
+                        "label":"Ascending"
                     },
                     {
-                        "value":"value",
-                        "label":"label"
+                        "value":"desc",
+                        "label":"Decending"
                     }
                 ],            
                 onChange=State.test,
                 width="100%",
                 isSearchable=False,
-                isClearable=False
+                isClearable=False,
+                placeholder = "Sort for"
             ),
             select(
                 options = [
                     {
-                        "value":"value",
-                        "label":"label"
+                        "value":"asc",
+                        "label":"Ascending"
                     },
                     {
-                        "value":"value",
-                        "label":"label"
+                        "value":"desc",
+                        "label":"Decending"
                     }
                 ],            
                 onChange=State.test,
                 width="100%",
                 isSearchable=False,
-                isClearable=False
+                isClearable=False,
+                placeholder="Sort order"
             ),
             position="absolute",
-            left="2vw",
+            left="3vw",
             top="17vh",
             width="40vw",
-            height="7.4vh"
+            height="7.4vh",
         ),
         rx.link(
             rx.image(
@@ -139,6 +142,7 @@ def search() -> rx.Component:
             border="0.109vh solid #CEC8D4",
             height="11.2vh",
             width="63vw",
+            border_radius="8px",
             on_blur=State.on_search_unfocus,
             on_focus=State.on_search_focus
         ),
