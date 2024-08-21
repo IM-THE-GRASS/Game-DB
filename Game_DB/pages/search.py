@@ -1,6 +1,20 @@
 import reflex as rx
 from Game_DB.state import State
 from Game_DB.components.keybind import Keybind
+class Select(rx.Component):
+    library = "react-select"
+    tag = "Select"
+    is_default = True
+    options:rx.Var[list[dict[str, str]]]
+    isClearable:rx.Var[bool]
+    isDisabled:rx.Var[bool]
+    isLoading:rx.Var[bool]
+    isSearchable:rx.Var[bool]
+    onChange: rx.EventHandler[lambda newValue: [newValue]]
+    unstyled:rx.Var[bool]
+
+
+select = Select.create
 def card(info):
     return rx.vstack(
         rx.image(
@@ -47,12 +61,43 @@ def search() -> rx.Component:
             interval=100,
             opacity="0"  
         ),
-        rx.box(
-            border= "1px solid #FFFFFF",
+        rx.hstack(
+            select(
+                options = [
+                    {
+                        "value":"value",
+                        "label":"label"
+                    },
+                    {
+                        "value":"value",
+                        "label":"label"
+                    }
+                ],            
+                onChange=State.test,
+                width="100%",
+                isSearchable=False,
+                isClearable=False
+            ),
+            select(
+                options = [
+                    {
+                        "value":"value",
+                        "label":"label"
+                    },
+                    {
+                        "value":"value",
+                        "label":"label"
+                    }
+                ],            
+                onChange=State.test,
+                width="100%",
+                isSearchable=False,
+                isClearable=False
+            ),
             position="absolute",
             left="2vw",
             top="17vh",
-            width="6vw",
+            width="40vw",
             height="7.4vh"
         ),
         rx.link(

@@ -88,3 +88,6 @@ class State(rx.State):
         self.search_value = new
     def print(self,_):
         self.search_results = self.search_results
+    def test(self, _):
+        print(_)
+        
