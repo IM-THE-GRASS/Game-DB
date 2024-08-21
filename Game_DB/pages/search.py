@@ -31,12 +31,12 @@ def card(info):
         padding="0.833vw",
         width="12.5vw",
         height="48vh",
-        border="0.109vh solid #CEC8D4"
+        border="0.109vh solid #444444",
+        border_radius="8px"
     )
 @rx.page(on_load=State.get_search_results)
 def search() -> rx.Component:
     return rx.box(
-        rx.text(State.search_resultss),
         Keybind(
             
             keys=["Enter"],
@@ -44,7 +44,16 @@ def search() -> rx.Component:
         ),
         rx.moment(
             on_change=State.print,
-            interval=100  
+            interval=100,
+            opacity="0"  
+        ),
+        rx.box(
+            border= "1px solid #FFFFFF",
+            position="absolute",
+            left="2vw",
+            top="17vh",
+            width="6vw",
+            height="7.4vh"
         ),
         rx.link(
             rx.image(
