@@ -36,9 +36,15 @@ def card(info):
 @rx.page(on_load=State.get_search_results)
 def search() -> rx.Component:
     return rx.box(
+        rx.text(State.search_resultss),
         Keybind(
+            
             keys=["Enter"],
             bind=lambda key:State.submit_search2(),
+        ),
+        rx.moment(
+            on_change=State.print,
+            interval=100  
         ),
         rx.link(
             rx.image(

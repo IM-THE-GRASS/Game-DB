@@ -3,7 +3,7 @@ import dotenv
 import os
 import requests
 import json
-
+import threading
 dotenv.load_dotenv()
 
 # API configuration
@@ -13,8 +13,11 @@ base_url = 'https://api.igdb.com/v4'
 class State(rx.State):
     search_value:str = ""
     search_focus:bool = False
-    search_results:list[dict[str, str]]
-    
+    search_results:list[dict[str, str]] = []
+    loading:bool
+    @rx.var()
+    def search_resultss(self) -> str:
+        return str(self.search_results)
     def get_from_api(self, endpoint, payload):
         response = requests.post(
             f'https://api.igdb.com/v4/{endpoint}',
@@ -26,19 +29,28 @@ class State(rx.State):
         return response.json()
         
     def get_search_results(self):
-        response = self.get_from_api("games", f'f *; search "{self.search_value}"; where version_parent = null;')
-        for result in response:
-            print(result)
-            try:
-                cover_response = self.get_from_api("covers", f"f *; where id = {result['cover']};")
-                url = "https:" + cover_response[0]["url"]
-                url = url.replace("thumb", "cover_big")
-            except:pass
-            platforms = self.get_from_api("platforms", f"f *; where id = {result['platforms'][0]};")
-            result["platform"] = platforms[0]["abbreviation"]
-            print(platforms)
-            result["img"] = url
-        self.search_results = response
+        def mains():
+            self.loading = True
+            response = self.get_from_api("games", f'f name, platforms, screenshots, cover   ; search "{self.search_value}"; where version_parent = null; l 100;')
+            self.search_results = []
+            for result in response:
+                try:
+                    cover_response = self.get_from_api("covers", f"f *; where id = {result['cover']};")
+                    url = "https:" + cover_response[0]["url"]
+                    url = url.replace("thumb", "cover_big")
+                except:pass
+                try:platforms = self.get_from_api("platforms", f"f *; where id = {result['platforms'][0]};")
+                except:pass
+                try:
+                    
+                    result["platform"] = platforms[0]["abbreviation"]
+                    result["img"] = url
+                    url = ""
+                except:pass
+                self.search_results.append(result)
+            self.loading = False
+        thread = threading.Thread(target=mains)
+        thread.start()
     
     def submit_search(self):
         if self.search_focus:
@@ -52,5 +64,6 @@ class State(rx.State):
         self.search_focus = False
     def on_search_change(self, new):
         self.search_value = new
-    def print(self):
-        print("AAA")
+    def print(self,_):
+        print(self.search_results)
+        self.search_results = self.search_results
