@@ -4,44 +4,25 @@ import os
 import requests
 import time
 import threading
+import json
 from datetime import datetime
+
 dotenv.load_dotenv()
 # API configuration
 client_id = os.environ.get("client_id")
 access_token = os.environ.get("token")
 base_url = 'https://api.igdb.com/v4'
 class State(rx.State):
+    loading:bool = False
+    
     search_value:str = ""
     search_focus:bool = False
     search_results:list[dict[str, str]] = []
-    search_sort:str
-    search_sort_order:str
-    sort_order_disabled:bool = True
-    loading:bool
-    stop_thread:bool
-    sort_order_options = [
-        {
-            "value":"asc",
-            "label":"Ascending"
-        },
-        {
-            "value":"desc",
-            "label":"Decending"
-        }
-    ]
-    sort_options = [
-        {
-            "value":"first_release_date",
-            "label":"Release date"
-        }
-    ]      
+    search_results_loading:bool = False
     
     @rx.var()
     def search_disabled(self) -> bool:
-        return self.search_sort or self.search_sort_order
-    @rx.var()
-    def search_resultss(self) -> str:
-        return str(self.search_results)
+        return self.search_sort or self.search_sort_for
     def get_from_api(self, endpoint, payload):
         response = requests.post(
             f'https://api.igdb.com/v4/{endpoint}',
@@ -52,16 +33,106 @@ class State(rx.State):
         )
         return response.json()
         
-    def get_search_results(self, search_sort:str = "", search_sort_order:str = ""):
+    
+    
+    #importantloading stuff i think
+    
+    def on_load(self):
+        return self.get_search_results()
+    def on_update(self,_):
+        self.search_results = self.search_results
+        if self.sort_for_disabled:
+            self.search_sort_for = ""
+        if self.search_results == [] and self.loading:
+            self.search_results_loading = True
+        else:
+            self.search_results_loading =  False
+    
+    
+        
+        
+        
+    # sort
+    search_sort:str
+    search_sort_for:str
+    sort_for_disabled:bool = True
+    sort_fors:dict = {
+        "Release date":[
+            {
+                "value":"asc",
+                "label":"Ascending"
+            },
+            {
+                "value":"desc",
+                "label":"Decending"
+            }
+        ]
+            
+    }
+    sort_for_options:list[dict[str, str]] = []
+    sort_options = [
+        {
+            "value":"first_release_date",
+            "label":"Release date"
+        }
+    ]
+    def set_sort_for(self, new):
+        try:
+            self.search_sort_for = new["value"]
+            self.submit_search2()
+        except:
+            self.search_sort_for = ""
+        
+    def set_sort(self, new):
+        try:
+            self.search_sort = new["value"]
+            self.sort_for_disabled = False
+            self.sort_for_options = self.sort_fors[new["label"]]
+        except:
+            self.sort_for_disabled = True
+            self.search_sort = ""
+            time.sleep(1)
+            
+            
+            
+            
+            
+            
+            
+    # search stuff
+    def submit_search(self):
+        if self.search_focus:
+            return rx.redirect("/search")
+    
+    def submit_search2(self):
+        if self.search_disabled:
+            self.get_search_results(self.search_sort, self.search_sort_for)
+        else:
+            self.get_search_results()
+            print("AA")
+    def on_search_focus(self):
+        self.search_focus = True
+    def on_search_unfocus(self):
+        self.search_focus = False
+    def on_search_change(self, new):
+        if not self.search_disabled:
+            self.search_value = new
+            
+    def print(self, _):
+        pass
+            
+
+    # big boy search 
+    stop_thread:bool
+    def get_search_results(self, search_sort:str = "", search_sort_for:str = ""):
         def mains():
-            self.loading = True
-            if search_sort and search_sort_order:
-                response = self.get_from_api("games", f'f name, platforms, screenshots, cover, first_release_date   ; where version_parent = null; l 100; sort {search_sort} {search_sort_order};')
+            if search_sort and search_sort_for:
+                response = self.get_from_api("games", f'f name, platforms, screenshots, cover, first_release_date   ; where version_parent = null; l 100; sort {search_sort} {search_sort_for};')
             else:
                 response = self.get_from_api("games", f'f name, platforms, screenshots, cover, first_release_date   ; search "{self.search_value}"; where version_parent = null; l 100;')
             self.search_results = []
+            self.loading = True
             for result in response:
-                print(result)
                 if self.stop_thread:
                     return
                 try:
@@ -85,7 +156,10 @@ class State(rx.State):
                             url = "https:" + cover_response[0]["url"]
                             print(result["name"], "GOT TO THIRD")
                         except:
-                            print(result["name"], "FAILED")
+                            try:print(result["name"], "FAILED")
+                            except:
+                                print(result)
+                                break
                             pass
                 try:platforms = self.get_from_api("platforms", f"f *; where id = {result['platforms'][0]};")
                 except:pass
@@ -99,52 +173,10 @@ class State(rx.State):
                 except:pass
                 self.search_results.append(result)
             self.loading = False
-            print(response)
         self.stop_thread = True
+        self.loading = True
         time.sleep(1)
         self.stop_thread = False
         thread = threading.Thread(target=mains)
         thread.start()
-    
-    def submit_search(self):
-        if self.search_focus:
-            return rx.redirect("/search")
-    def submit_search2(self):
-        if self.search_sort and self.search_sort_order:
-            self.get_search_results(self.search_sort, self.search_sort_order)
-    def on_search_focus(self):
-        self.search_focus = True
-    def on_search_unfocus(self):
-        self.search_focus = False
-    def on_search_change(self, new):
-        if not self.search_disabled:
-            self.search_value = new
-    def print(self,_):
-        self.search_results = self.search_results
-        print(self.search_sort)
-        print(self.search_sort_order)
-        if self.sort_order_disabled:
-            self.search_sort_order = ""
-    def test(self, _):
-        print(_)
-    def set_sort_order(self, new):
-        try:
-            self.search_sort_order = new["value"]
-        except:
-            self.search_sort_order = ""
-        
-    def set_sort(self, new):
-        try:
-            self.search_sort = new["value"]
-            self.sort_order_disabled = False
-        except:
-            self.sort_order_disabled = True
-            self.search_sort = ""
-            time.sleep(1)
-            self.sort_order_options = [
-                {
-                    "value":"dog",
-                    "label":"dog"
-                }
-            ]
         

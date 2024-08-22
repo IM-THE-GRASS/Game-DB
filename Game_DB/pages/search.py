@@ -14,7 +14,25 @@ class Select(rx.Component):
     onChange: rx.EventHandler[lambda newValue: [newValue]]
     unstyled:rx.Var[bool]
     placeholder:rx.Var[str]
+from reflex_lottiefiles import LottieFiles
 
+def loading():
+    return rx.center(
+        rx.vstack(
+            rx.heading("Loading, please wait"),
+            LottieFiles(
+                src="https://lottie.host/5ff06a80-3f45-4dd3-8737-f4cf62ba3d48/X5hdVEjbNK.lottie",
+                autoplay=True,
+                loop=True,
+                width="20vw",
+                height="20vw",
+            )
+        ),
+        
+        width="100%",
+        height="90vh"
+        
+    ),
 
 select = Select.create
 def card(info):
@@ -50,7 +68,7 @@ def card(info):
         border="0.109vh solid #444444",
         border_radius="8px"
     )
-@rx.page(on_load=State.get_search_results)
+@rx.page(on_load=State.on_load)
 def search() -> rx.Component:
     return rx.box(
         Keybind(
@@ -59,7 +77,7 @@ def search() -> rx.Component:
             bind=lambda key:State.submit_search2(),
         ),
         rx.moment(
-            on_change=State.print,
+            on_change=State.on_update,
             interval=100,
             opacity="0"  
         ),
@@ -70,16 +88,16 @@ def search() -> rx.Component:
                 width="100%",
                 isSearchable=False,
                 isClearable=True,
-                placeholder = "Sort for"
+                placeholder = "Search by"
             ),
             select(
-                options = State.sort_order_options,          
-                onChange=State.set_sort_order,
+                options = State.sort_for_options,          
+                onChange=State.set_sort_for,
                 width="100%",
                 isSearchable=False,
                 isClearable=True,
-                isDisabled=State.sort_order_disabled,
-                placeholder="Sort order"
+                isDisabled=State.sort_for_disabled,
+                placeholder="Sort for"
                 
             ),
             position="absolute",
@@ -145,11 +163,38 @@ def search() -> rx.Component:
             on_blur=State.on_search_unfocus,
             on_focus=State.on_search_focus
         ),
+        rx.box(
+            rx.cond(
+                State.search_results_loading,
+                rx.center(
+                    rx.vstack(
+                        rx.heading("Loading, please wait"),
+                        LottieFiles(
+                            src="https://lottie.host/5ff06a80-3f45-4dd3-8737-f4cf62ba3d48/X5hdVEjbNK.lottie",
+                            autoplay=True,
+                            loop=True,
+                            width="20vw",
+                            height="20vw",
+                        )
+                    ),
+                    
+                    width="100%",
+                    height="90vh"
+                    
+                )
+            ),
+            
+            position="absolute",
+            left="3vw",
+            top="27vh",
+            width="90%"
+        ),
         rx.grid(
             rx.foreach(
                 State.search_results,
                 card  
             ),
+            
             position="absolute",
             left="3vw",
             top="27vh",
