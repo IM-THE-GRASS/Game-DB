@@ -85,7 +85,7 @@ def search() -> rx.Component:
             select(
                 options = State.sort_options,      
                 onChange=State.set_sort,
-                width="100%",
+                width="20vw",
                 isSearchable=False,
                 isClearable=True,
                 placeholder = "Search by"
@@ -93,7 +93,7 @@ def search() -> rx.Component:
             select(
                 options = State.sort_for_options,          
                 onChange=State.set_sort_for,
-                width="100%",
+                width="20vw",
                 isSearchable=False,
                 isClearable=True,
                 isDisabled=State.sort_for_disabled,
@@ -103,7 +103,7 @@ def search() -> rx.Component:
             position="absolute",
             left="3vw",
             top="17vh",
-            width="40vw",
+            width="100%",
             height="7.4vh",
         ),
         rx.link(
@@ -200,6 +200,7 @@ def search() -> rx.Component:
             top="27vh",
             columns="7",
             spacing="8",
-            width="90%"
-        )
+            width="90%",
+        ),
+        overflow="hidden"
     )

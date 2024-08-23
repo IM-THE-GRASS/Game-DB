@@ -7,6 +7,10 @@ import threading
 import json
 from datetime import datetime
 
+# todo:
+# gmae mode 
+
+
 dotenv.load_dotenv()
 # API configuration
 client_id = os.environ.get("client_id")
@@ -75,16 +79,61 @@ class State(rx.State):
                 "value":"desc",
                 "label":"Decending",
             }
-        ]
-            
+        ],
+        "Alphabetical":[
+            {
+                "value":"asc",
+                "label":"Ascending"
+            },
+            {
+                "value":"desc",
+                "label":"Decending",
+            }
+        ],
+        "Average Rating":[
+            {
+                "value":"asc",
+                "label":"Ascending"
+            },
+            {
+                "value":"desc",
+                "label":"Decending",
+            }
+        ],
+        "Popularity":[
+            {
+                "value":"asc",
+                "label":"Ascending"
+            },
+            {
+                "value":"desc",
+                "label":"Decending",
+            }
+        ],
     }
+    
+    def fix_thing(to_fix):
+        for thing in to_fix:
+            thing["value"] = thing["id"]
+            thing.pop("id")
+            thing["label"] = thing["name"]
+            thing.pop("name")    
+        return to_fix
     sort_fors["Genre"] = get_from_api2(endpoint="genres", payload="f name, id; l 500;")
-    for genre in sort_fors["Genre"]:
-        genre["value"] = genre["id"]
-        genre.pop("id")
-        genre["label"] = genre["name"]
-        genre.pop("name")
-    print(sort_fors["Genre"])
+    sort_fors["Genre"] = fix_thing(sort_fors["Genre"])
+    sort_fors["Game Engine"] = get_from_api2(endpoint="game_engines", payload="f name, id; l 500;")
+    sort_fors["Game Engine"] = fix_thing(sort_fors["Game Engine"])
+    sort_fors["Platform"] = get_from_api2(endpoint="platforms", payload="f name, id; l 500;")
+    sort_fors["Platform"] = fix_thing(sort_fors["Platform"])
+    sort_fors["Player Perspective"] = get_from_api2(endpoint="player_perspectives", payload="f name, id; l 500;")
+    sort_fors["Player Perspective"] = fix_thing(sort_fors["Player Perspective"])
+    sort_fors["Theme"] = get_from_api2(endpoint="themes", payload="f name, id; l 500;")
+    sort_fors["Theme"] = fix_thing(sort_fors["Theme"])
+    sort_fors["Franchise"] = get_from_api2(endpoint="franchises", payload="f name, id; l 500;")
+    sort_fors["Franchise"] = fix_thing(sort_fors["Franchise"])
+    sort_fors["Game mode"] = get_from_api2(endpoint="game_modes", payload="f name, id; l 500;")
+    sort_fors["Game mode"] = fix_thing(sort_fors["Game mode"])
+    print(sort_fors["Game Engine"])
     sort_for_options:list[dict[str, str]] = []
     sort_options = [
         {
@@ -93,10 +142,55 @@ class State(rx.State):
             "sort":True
         },
         {
+            "value":"franchises",
+            "label":"Franchise",
+            "sort":False    
+        },
+        {
+            "value":"game_engines",
+            "label":"Game Engine",
+            "sort":False
+        },
+        {
+            "value":"player_perspectives",
+            "label":"Player Perspective",
+            "sort":False
+        },
+        {
+            "value":"themes",
+            "label":"Theme",
+            "sort":False
+        },
+        {
+            "value":"rating",
+            "label":"Average Rating",
+            "sort":True
+        },
+        {
+            "value":"rating_count",
+            "label":"Popularity",
+            "sort":True
+        },
+        {
+            "value":"platforms",
+            "label":"Platform",
+            "sort":False
+        },
+        {
+            "value":"gmae_modes",
+            "label":"Game mode",
+            "sort":False
+        },
+        {
             "value":"genres",
             "label":"Genre",
             "sort":False
-        }
+        },
+        {
+            "value":"name",
+            "label":"Alphabetical",
+            "sort":True
+        },
     ]
     sort_info:dict
     def set_sort_for(self, new):
