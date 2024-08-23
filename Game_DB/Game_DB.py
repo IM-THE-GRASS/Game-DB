@@ -6,7 +6,7 @@ from Game_DB.components.keybind import Keybind
 from Game_DB.state import State
 from Game_DB.pages.search import search
 from Game_DB.pages.platforms import platforms
-
+from Game_DB.pages.characters import characters
 
 
 
@@ -105,3 +105,4 @@ app = rx.App(stylesheets=["./styles.css"])
 app.add_page(index)
 app.add_page(search)
 app.add_page(platforms)
+app.add_page(characters)

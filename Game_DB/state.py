@@ -453,3 +453,105 @@ class State(rx.State):
         self.stop_thread = False
         thread = threading.Thread(target=mains)
         thread.start()
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    #characters 
+    
+    search_results_loading:bool
+    characters_search_results:list[dict[str,str]]
+    # ideas
+    # generation
+    # alphabetical
+    # family
+    
+    character_sort_options:list = [
+        {
+            "value":"name",
+            "label":"Alphabetical"
+        }
+    ]
+    character_sort_for_options:list[dict[str,str]] = [
+        {
+            "value":"asc",
+            "label":"Ascending"
+        },
+        {
+            "value":"desc",
+            "label":"Decending",
+        }
+    ]
+    def character_set_sort_for(self, new):
+        try:
+            self.sort_for = new["value"]
+            self.on_character_submit()
+        except:
+            self.sort_for = ""
+        
+    def character_set_sort(self, new):
+        try:
+            self.sort = new["value"]
+            self.sort_for_disabled = False
+            # self.sort_for_options = self.sort_fors[new["label"]]
+            if self.sort_for:
+                self.on_character_submit()
+        except:
+            # this runs if thething is none
+            self.sort_for_disabled = True
+            self.sort = ""
+            time.sleep(1)
+    def on_character_submit(self):
+        if self.sort and self.sort_for:
+            self.character_get_search_results(self.sort, self.sort_for)
+        else:         
+            self.character_get_search_results()
+            
+    def character_get_search_results(self, sort:str = "", sort_for:str = ""):
+        def mains():
+            print("HEHEHHAHAHHA")
+            if sort and sort_for:
+                print("AA")
+                response = self.get_from_api("characters", f'f *   ; sort {sort} {sort_for}; l 100;')
+            else:
+                response = self.get_from_api("characters", f'f *   ; search "{self.search_value}"; l 100;')
+            self.characters_search_results = []
+            self.loading = True
+            for result in response:
+                if self.stop_thread:
+                    return
+                try:
+                    cover_response = self.get_from_api("character_mug_shots", f"f *; where id = {result['mug_shot']};")
+                    url = "https:" + cover_response[0]["url"]
+                    url = url.replace("thumb", "cover_big_2x")
+                    if url == "":
+                        raise Exception()
+                except:
+                    try:
+                        cover_response = self.get_from_api("character_mug_shots", f"f *; where id = {result['mug_shot']};")
+                        url = "https:" + cover_response[0]["url"]
+                        print(result["name"], " IS SECOND AT")
+                    except:
+                        try:print(result["name"], "FAILED")
+                        except:
+                            print(result)
+                            break
+                        pass
+                try:
+                    result["img"] = url
+                    url = ""
+                except:pass
+                self.characters_search_results.append(result)
+                print(result, "RESULT   ")
+            self.loading = False
+        self.stop_thread = True
+        self.loading = True
+        time.sleep(1)
+        self.stop_thread = False
+        thread = threading.Thread(target=mains)
+        thread.start()
