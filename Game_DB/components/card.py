@@ -1,5 +1,5 @@
 import reflex as rx
-
+from Game_DB.components.carousel import Slider
 def card(info, **kwargs):
     return rx.dialog.root(
         rx.dialog.trigger(
@@ -38,13 +38,78 @@ def card(info, **kwargs):
             )
         ),
         rx.dialog.content(
-            rx.dialog.title(info["name"]),
-            rx.dialog.description(info["summary"]),
-            rx.dialog.close(
-                rx.button(
-                    "Close"
+            rx.hstack(
+                rx.image(
+                    src=info["img"],
+                    height="50vh",
+                    object_fit="contain"
+                ),
+                rx.vstack(
+                    rx.heading(
+                        info["name"],
+                        font_size="5vh"
+                    
+                    ),
+                    rx.box(
+                        Slider(
+                            rx.image(
+                                src=info["img"],
+                                height="30vh",
+                                width="25vw",
+                                object_fit="contain"
+                            ),
+                            rx.image(
+                                src=info["img"],
+                                width="25vw",
+                                height="30vh",
+                                
+                                object_fit="contain"
+                            ),
+                            rx.image(
+                                src=info["img"],
+                                width="25vw",
+                                height="30vh",
+                                object_fit="contain"
+                            ),
+                            rx.image(
+                                src=info["img"],
+                                width="25vw",
+                                height="30vh",
+                                object_fit="contain"
+                            ),
+                            rx.image(
+                                src=info["img"],
+                                width="25vw",
+                                height="30vh",
+                                object_fit="contain"
+                            ),
+                            rx.image(
+                                src=info["img"],
+                                width="25vw",
+                                height="30vh",
+                                object_fit="contain"
+                            ),
+                            width="20vw",
+                            showDots=True
+                        ),
+                        height="30vh"
+                    ),
+                    rx.hstack(
+                        rx.icon("globe"),
+                        rx.text("Site")
+                    ),
+                    rx.hstack(
+                        rx.icon("star"),
+                        rx.icon("star"),
+                        rx.icon("star"),
+                        rx.icon("star", color="gray"),
+                        rx.icon("star", color="gray"),
+                        rx.text("(100)", color_scheme="gray")
+                    ),
+                    rx.dialog.description(info["summary"]),
                 )
             )
+            
         )
     )
     

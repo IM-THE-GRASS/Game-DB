@@ -1343,6 +1343,10 @@
             "label": "Argon"
         },
         {
+            "value": 344,
+            "label": "Pygame"
+        },
+        {
             "value": 1291,
             "label": "Pinball Construction Set"
         },
@@ -1393,10 +1397,6 @@
         {
             "value": 300,
             "label": "HTML"
-        },
-        {
-            "value": 344,
-            "label": "Pygame"
         },
         {
             "value": 1344,
@@ -4991,6 +4991,10 @@
             "label": "IGS PolyGame Master"
         },
         {
+            "value": 6,
+            "label": "Unreal Engine"
+        },
+        {
             "value": 322,
             "label": "ZDoom"
         },
@@ -4999,12 +5003,12 @@
             "label": "GoldSrc"
         },
         {
-            "value": 277,
-            "label": "WOLF RPG Editor"
-        },
-        {
             "value": 179,
             "label": "Ren'Py Visual Novel Engine"
+        },
+        {
+            "value": 277,
+            "label": "WOLF RPG Editor"
         },
         {
             "value": 55,
@@ -5049,10 +5053,6 @@
         {
             "value": 455,
             "label": "Orx"
-        },
-        {
-            "value": 6,
-            "label": "Unreal Engine"
         },
         {
             "value": 354,
@@ -5151,6 +5151,10 @@
             "label": "Dunia Engine"
         },
         {
+            "value": 13,
+            "label": "Unity"
+        },
+        {
             "value": 420,
             "label": "Stencyl"
         },
@@ -5181,10 +5185,6 @@
         {
             "value": 595,
             "label": "FNA"
-        },
-        {
-            "value": 13,
-            "label": "Unity"
         }
     ],
     "Platform": [
@@ -5257,10 +5257,6 @@
             "label": "Odyssey"
         },
         {
-            "value": 6,
-            "label": "PC (Microsoft Windows)"
-        },
-        {
             "value": 134,
             "label": "Acorn Electron"
         },
@@ -5279,6 +5275,10 @@
         {
             "value": 146,
             "label": "AY-3-8605"
+        },
+        {
+            "value": 6,
+            "label": "PC (Microsoft Windows)"
         },
         {
             "value": 136,
@@ -5981,6 +5981,10 @@
             "label": "Linux"
         },
         {
+            "value": 4,
+            "label": "Nintendo 64"
+        },
+        {
             "value": 55,
             "label": "Legacy Mobile Device"
         },
@@ -5989,16 +5993,16 @@
             "label": "Super Famicom"
         },
         {
-            "value": 4,
-            "label": "Nintendo 64"
-        },
-        {
             "value": 487,
             "label": "LaserActive"
         },
         {
             "value": 63,
             "label": "Atari ST/STE"
+        },
+        {
+            "value": 5,
+            "label": "Wii"
         },
         {
             "value": 75,
@@ -6019,10 +6023,6 @@
         {
             "value": 159,
             "label": "Nintendo DSi"
-        },
-        {
-            "value": 5,
-            "label": "Wii"
         },
         {
             "value": 14,
@@ -6047,6 +6047,18 @@
     ],
     "Player Perspective": [
         {
+            "value": 7,
+            "label": "Virtual Reality"
+        },
+        {
+            "value": 1,
+            "label": "First person"
+        },
+        {
+            "value": 2,
+            "label": "Third person"
+        },
+        {
             "value": 3,
             "label": "Bird view / Isometric"
         },
@@ -6061,18 +6073,6 @@
         {
             "value": 6,
             "label": "Auditory"
-        },
-        {
-            "value": 7,
-            "label": "Virtual Reality"
-        },
-        {
-            "value": 1,
-            "label": "First person"
-        },
-        {
-            "value": 2,
-            "label": "Third person"
         }
     ],
     "Theme": [
@@ -8939,6 +8939,10 @@
             "label": "SoulCalibur"
         },
         {
+            "value": 1777,
+            "label": "Golden Axe"
+        },
+        {
             "value": 1974,
             "label": "SimCity"
         },
@@ -8965,10 +8969,6 @@
         {
             "value": 1775,
             "label": "King of the Hill"
-        },
-        {
-            "value": 1777,
-            "label": "Golden Axe"
         },
         {
             "value": 3239,
@@ -10865,6 +10865,10 @@
         {
             "value": 1304,
             "label": "Hyperdimension Neptunia"
+        },
+        {
+            "value": 124,
+            "label": "Marvel"
         },
         {
             "value": 3561,
@@ -14767,10 +14771,6 @@
             "label": "Gundam"
         },
         {
-            "value": 124,
-            "label": "Marvel"
-        },
-        {
             "value": 2214,
             "label": "The Simpsons"
         },
@@ -14817,6 +14817,14 @@
     ],
     "Game mode": [
         {
+            "value": 1,
+            "label": "Single player"
+        },
+        {
+            "value": 2,
+            "label": "Multiplayer"
+        },
+        {
             "value": 3,
             "label": "Co-operative"
         },
@@ -14831,14 +14839,6 @@
         {
             "value": 6,
             "label": "Battle Royale"
-        },
-        {
-            "value": 1,
-            "label": "Single player"
-        },
-        {
-            "value": 2,
-            "label": "Multiplayer"
         }
     ]
 }
