@@ -86,24 +86,42 @@ def search() -> rx.Component:
                 options = State.sort_options,      
                 onChange=State.set_sort,
                 width="20vw",
-                isSearchable=False,
+                isSearchable=True,
                 isClearable=True,
-                placeholder = "Search by"
+                placeholder = "Sort"
             ),
             select(
                 options = State.sort_for_options,          
                 onChange=State.set_sort_for,
                 width="20vw",
-                isSearchable=False,
+                isSearchable=True,
                 isClearable=True,
                 isDisabled=State.sort_for_disabled,
                 placeholder="Sort for"
                 
             ),
+            select(
+                options = State.filter_options,      
+                onChange=State.set_filter,
+                width="20vw",
+                isSearchable=True,
+                isClearable=True,
+                placeholder = "Filter"
+            ),
+            select(
+                options = State.filter_for_options,          
+                onChange=State.set_filter_for,
+                width="20vw",
+                isSearchable=True,
+                isClearable=True,
+                isDisabled=State.filter_for_disabled,
+                placeholder="Filter for"
+                
+            ),
             position="absolute",
             left="3vw",
             top="17vh",
-            width="100%",
+            width="90vw",
             height="7.4vh",
         ),
         rx.link(

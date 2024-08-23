@@ -26,7 +26,7 @@ class State(rx.State):
     
     @rx.var()
     def search_disabled(self) -> bool:
-        return self.search_sort or self.search_sort_for
+        return self.sort or self.sort_for
     def get_from_api(self, endpoint, payload):
         response = requests.post(
             f'https://api.igdb.com/v4/{endpoint}',
@@ -55,7 +55,7 @@ class State(rx.State):
     def on_update(self,_):
         self.search_results = self.search_results
         if self.sort_for_disabled:
-            self.search_sort_for = ""
+            self.sort_for = ""
         if self.search_results == [] and self.loading:
             self.search_results_loading = True
         else:
@@ -66,8 +66,8 @@ class State(rx.State):
         
         
     # sort
-    search_sort:str
-    search_sort_for:str
+    sort:str
+    sort_for:str
     sort_for_disabled:bool = True
     sort_fors:dict = {
         "Release date":[
@@ -119,21 +119,6 @@ class State(rx.State):
             thing["label"] = thing["name"]
             thing.pop("name")    
         return to_fix
-    sort_fors["Genre"] = get_from_api2(endpoint="genres", payload="f name, id; l 500;")
-    sort_fors["Genre"] = fix_thing(sort_fors["Genre"])
-    sort_fors["Game Engine"] = get_from_api2(endpoint="game_engines", payload="f name, id; l 500;")
-    sort_fors["Game Engine"] = fix_thing(sort_fors["Game Engine"])
-    sort_fors["Platform"] = get_from_api2(endpoint="platforms", payload="f name, id; l 500;")
-    sort_fors["Platform"] = fix_thing(sort_fors["Platform"])
-    sort_fors["Player Perspective"] = get_from_api2(endpoint="player_perspectives", payload="f name, id; l 500;")
-    sort_fors["Player Perspective"] = fix_thing(sort_fors["Player Perspective"])
-    sort_fors["Theme"] = get_from_api2(endpoint="themes", payload="f name, id; l 500;")
-    sort_fors["Theme"] = fix_thing(sort_fors["Theme"])
-    sort_fors["Franchise"] = get_from_api2(endpoint="franchises", payload="f name, id; l 500;")
-    sort_fors["Franchise"] = fix_thing(sort_fors["Franchise"])
-    sort_fors["Game mode"] = get_from_api2(endpoint="game_modes", payload="f name, id; l 500;")
-    sort_fors["Game mode"] = fix_thing(sort_fors["Game mode"])
-    print(sort_fors["Game Engine"])
     sort_for_options:list[dict[str, str]] = []
     sort_options = [
         {
@@ -141,6 +126,70 @@ class State(rx.State):
             "label":"Release date",
             "sort":True
         },
+        {
+            "value":"rating",
+            "label":"Average Rating",
+            "sort":True
+        },
+        {
+            "value":"rating_count",
+            "label":"Popularity",
+            "sort":True
+        },
+        {
+            "value":"name",
+            "label":"Alphabetical",
+            "sort":True
+        },
+    ]
+    sort_info:dict
+    def set_sort_for(self, new):
+        try:
+            self.sort_for = new["value"]
+            self.submit_search2()
+        except:
+            self.sort_for = ""
+        
+    def set_sort(self, new):
+        self.sort_info = new
+        try:
+            self.sort = new["value"]
+            self.sort_for_disabled = False
+            self.sort_for_options = self.sort_fors[new["label"]]
+            if self.sort_for:
+                self.submit_search2()
+        except:
+            # this runs if thething is none
+            self.sort_for_disabled = True
+            self.sort = ""
+            time.sleep(1)
+    
+    
+    
+    
+    
+    
+    # filter
+    filter:str
+    filter_for:str
+    filter_for_disabled:bool = True
+    filter_fors:dict = {}
+    filter_fors["Genre"] = get_from_api2(endpoint="genres", payload="f name, id; l 500;")
+    filter_fors["Genre"] = fix_thing(filter_fors["Genre"])
+    filter_fors["Game Engine"] = get_from_api2(endpoint="game_engines", payload="f name, id; l 500;")
+    filter_fors["Game Engine"] = fix_thing(filter_fors["Game Engine"])
+    filter_fors["Platform"] = get_from_api2(endpoint="platforms", payload="f name, id; l 500;")
+    filter_fors["Platform"] = fix_thing(filter_fors["Platform"])
+    filter_fors["Player Perspective"] = get_from_api2(endpoint="player_perspectives", payload="f name, id; l 500;")
+    filter_fors["Player Perspective"] = fix_thing(filter_fors["Player Perspective"])
+    filter_fors["Theme"] = get_from_api2(endpoint="themes", payload="f name, id; l 500;")
+    filter_fors["Theme"] = fix_thing(filter_fors["Theme"])
+    filter_fors["Franchise"] = get_from_api2(endpoint="franchises", payload="f name, id; l 500;")
+    filter_fors["Franchise"] = fix_thing(filter_fors["Franchise"])
+    filter_fors["Game mode"] = get_from_api2(endpoint="game_modes", payload="f name, id; l 500;")
+    filter_fors["Game mode"] = fix_thing(filter_fors["Game mode"])
+    filter_for_options:list[dict[str, str]] = []
+    filter_options = [
         {
             "value":"franchises",
             "label":"Franchise",
@@ -162,22 +211,12 @@ class State(rx.State):
             "sort":False
         },
         {
-            "value":"rating",
-            "label":"Average Rating",
-            "sort":True
-        },
-        {
-            "value":"rating_count",
-            "label":"Popularity",
-            "sort":True
-        },
-        {
             "value":"platforms",
             "label":"Platform",
             "sort":False
         },
         {
-            "value":"gmae_modes",
+            "value":"game_modes",
             "label":"Game mode",
             "sort":False
         },
@@ -186,30 +225,29 @@ class State(rx.State):
             "label":"Genre",
             "sort":False
         },
-        {
-            "value":"name",
-            "label":"Alphabetical",
-            "sort":True
-        },
     ]
-    sort_info:dict
-    def set_sort_for(self, new):
+    filter_info:dict
+    def set_filter_for(self, new):
         try:
-            self.search_sort_for = new["value"]
+            self.filter_for = new["value"]
             self.submit_search2()
         except:
-            self.search_sort_for = ""
+            # this runs if thething is none
+            self.filter_for = ""
         
-    def set_sort(self, new):
-        self.sort_info = new
+    def set_filter(self, new):
+        self.filter_info = new
         try:
-            self.search_sort = new["value"]
-            self.sort_for_disabled = False
-            self.sort_for_options = self.sort_fors[new["label"]]
+            self.filter = new["value"]
+            self.filter_for_disabled = False
+            self.filter_for_options = self.filter_fors[new["label"]]
+            if self.filter_for:
+                self.submit_search2()
         except:
-            self.sort_for_disabled = True
-            self.search_sort = ""
+            self.filter_for_disabled = True
+            self.filter = ""
             time.sleep(1)
+    
             
             
             
@@ -223,11 +261,14 @@ class State(rx.State):
             return rx.redirect("/search")
     
     def submit_search2(self):
-        if self.search_disabled:
-            if self.sort_info["sort"]:
-                self.get_search_results(self.search_sort, self.search_sort_for,"","")
+        if self.sort and self.sort_for:
+            
+            if self.filter and self.filter_for:
+                self.get_search_results(self.sort,self.sort_for,self.filter,self.filter_for)
             else:
-                self.get_search_results("","",self.search_sort,self.search_sort_for)
+                self.get_search_results(self.sort, self.sort_for,"","")
+        elif self.filter and self.filter_for:
+            self.get_search_results("","",self.filter,self.filter_for)
         else:
             self.get_search_results()
     def on_search_focus(self):
@@ -244,12 +285,15 @@ class State(rx.State):
 
     # big boy search 
     stop_thread:bool
-    def get_search_results(self, search_sort:str = "", search_sort_for:str = "", filter = "", filter_for = ""):
+    def get_search_results(self, sort:str = "", sort_for:str = "", filter = "", filter_for = ""):
         def mains():
-            if search_sort and search_sort_for:
-                response = self.get_from_api("games", f'f name, platforms, screenshots, cover, first_release_date   ; where version_parent = null; l 100; sort {search_sort} {search_sort_for};')
+            if sort and sort_for:
+                if filter and filter_for:
+                    response = self.get_from_api("games", f'f name, platforms, screenshots, cover, first_release_date   ; where version_parent = null; l 100; where {filter} = {filter_for}; sort {sort} {sort_for};')    
+                else:
+                    response = self.get_from_api("games", f'f name, platforms, screenshots, cover, first_release_date   ; where version_parent = null; l 100; sort {sort} {sort_for};')
             elif filter and filter_for:
-                response = self.get_from_api("games", f'f name, platforms, screenshots, cover, first_release_date   ; where version_parent = null; where {filter} = {filter_for}; l 100;')
+                response = self.get_from_api("games", f'f name, platforms, screenshots, cover, first_release_date   ; search "{self.search_value}"; where version_parent = null; where {filter} = {filter_for}; l 100;')
                 print(f'f name, platforms, screenshots, cover, first_release_date   ; where version_parent = null; where {filter}[{filter_for}]; l 100;')
             else:
                 response = self.get_from_api("games", f'f name, platforms, screenshots, cover, first_release_date   ; search "{self.search_value}"; where version_parent = null; l 100;')
