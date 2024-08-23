@@ -5,6 +5,7 @@ import requests
 import time
 import threading
 import json
+import os
 from datetime import datetime
 
 # todo:
@@ -100,16 +101,6 @@ class State(rx.State):
                 "label":"Decending",
             }
         ],
-        "Popularity":[
-            {
-                "value":"asc",
-                "label":"Ascending"
-            },
-            {
-                "value":"desc",
-                "label":"Decending",
-            }
-        ],
     }
     
     def fix_thing(to_fix):
@@ -129,11 +120,6 @@ class State(rx.State):
         {
             "value":"rating",
             "label":"Average Rating",
-            "sort":True
-        },
-        {
-            "value":"rating_count",
-            "label":"Popularity",
             "sort":True
         },
         {
@@ -185,9 +171,32 @@ class State(rx.State):
     filter_fors["Theme"] = get_from_api2(endpoint="themes", payload="f name, id; l 500;")
     filter_fors["Theme"] = fix_thing(filter_fors["Theme"])
     filter_fors["Franchise"] = get_from_api2(endpoint="franchises", payload="f name, id; l 500;")
+    filter_fors["Franchise"].extend(get_from_api2(endpoint="franchises", payload="f name, id; l 500; offset 500;"))
+    filter_fors["Franchise"].extend(get_from_api2(endpoint="franchises", payload="f name, id; l 500; offset 1000;"))
+    filter_fors["Franchise"].extend(get_from_api2(endpoint="franchises", payload="f name, id; l 500; offset 1500;"))
+    filter_fors["Franchise"].extend(get_from_api2(endpoint="franchises", payload="f name, id; l 500; offset 2000;"))
+    filter_fors["Franchise"].extend(get_from_api2(endpoint="franchises", payload="f name, id; l 500; offset 2500;"))
+    filter_fors["Franchise"].extend(get_from_api2(endpoint="franchises", payload="f name, id; l 500; offset 3000;"))
+    filter_fors["Franchise"].extend(get_from_api2(endpoint="franchises", payload="f name, id; l 500; offset 3500;"))
+    print(len(filter_fors["Franchise"]))
     filter_fors["Franchise"] = fix_thing(filter_fors["Franchise"])
     filter_fors["Game mode"] = get_from_api2(endpoint="game_modes", payload="f name, id; l 500;")
     filter_fors["Game mode"] = fix_thing(filter_fors["Game mode"])
+    
+    
+    filter_fors["Game Engine"] = get_from_api2(endpoint="game_engines", payload="f name, id; l 500;")
+    filter_fors["Game Engine"].extend(get_from_api2(endpoint="game_engines", payload="f name, id; l 500; offset 500;"))
+    filter_fors["Game Engine"].extend(get_from_api2(endpoint="game_engines", payload="f name, id; l 500; offset 1000;"))
+    filter_fors["Game Engine"].extend(get_from_api2(endpoint="game_engines", payload="f name, id; l 500; offset 1500;"))
+    filter_fors["Game Engine"].extend(get_from_api2(endpoint="game_engines", payload="f name, id; l 500; offset 2000;"))
+    filter_fors["Game Engine"].extend(get_from_api2(endpoint="game_engines", payload="f name, id; l 500; offset 2500;"))
+    print(len(filter_fors["Game Engine"]))
+    print(len(filter_fors["Platform"]))
+    
+    filter_fors["Game Engine"] = fix_thing(filter_fors["Game Engine"])
+    data = json.dumps(filter_fors, indent=4)
+    open(os.path.join(os.getcwd(), "assets","sort_options.json"), "w").write(json.dumps(filter_fors, indent=4))
+    # print(json.dumps(filter_fors))
     filter_for_options:list[dict[str, str]] = []
     filter_options = [
         {
