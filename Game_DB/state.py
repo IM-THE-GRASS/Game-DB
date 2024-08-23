@@ -32,7 +32,16 @@ class State(rx.State):
             }
         )
         return response.json()
-        
+    def get_from_api2(endpoint:str, payload:str):
+        response = requests.post(
+            f'https://api.igdb.com/v4/{endpoint}',
+            **{
+                'headers': {'Client-ID': f'{client_id}', 'Authorization': f'Bearer {access_token}'},
+                'data': payload
+            }
+        )
+        print(response)
+        return response.json()
     
     
     #importantloading stuff i think
@@ -64,18 +73,32 @@ class State(rx.State):
             },
             {
                 "value":"desc",
-                "label":"Decending"
+                "label":"Decending",
             }
         ]
             
     }
+    sort_fors["Genre"] = get_from_api2(endpoint="genres", payload="f name, id; l 500;")
+    for genre in sort_fors["Genre"]:
+        genre["value"] = genre["id"]
+        genre.pop("id")
+        genre["label"] = genre["name"]
+        genre.pop("name")
+    print(sort_fors["Genre"])
     sort_for_options:list[dict[str, str]] = []
     sort_options = [
         {
             "value":"first_release_date",
-            "label":"Release date"
+            "label":"Release date",
+            "sort":True
+        },
+        {
+            "value":"genres",
+            "label":"Genre",
+            "sort":False
         }
     ]
+    sort_info:dict
     def set_sort_for(self, new):
         try:
             self.search_sort_for = new["value"]
@@ -84,6 +107,7 @@ class State(rx.State):
             self.search_sort_for = ""
         
     def set_sort(self, new):
+        self.sort_info = new
         try:
             self.search_sort = new["value"]
             self.sort_for_disabled = False
@@ -106,10 +130,12 @@ class State(rx.State):
     
     def submit_search2(self):
         if self.search_disabled:
-            self.get_search_results(self.search_sort, self.search_sort_for)
+            if self.sort_info["sort"]:
+                self.get_search_results(self.search_sort, self.search_sort_for,"","")
+            else:
+                self.get_search_results("","",self.search_sort,self.search_sort_for)
         else:
             self.get_search_results()
-            print("AA")
     def on_search_focus(self):
         self.search_focus = True
     def on_search_unfocus(self):
@@ -124,10 +150,13 @@ class State(rx.State):
 
     # big boy search 
     stop_thread:bool
-    def get_search_results(self, search_sort:str = "", search_sort_for:str = ""):
+    def get_search_results(self, search_sort:str = "", search_sort_for:str = "", filter = "", filter_for = ""):
         def mains():
             if search_sort and search_sort_for:
                 response = self.get_from_api("games", f'f name, platforms, screenshots, cover, first_release_date   ; where version_parent = null; l 100; sort {search_sort} {search_sort_for};')
+            elif filter and filter_for:
+                response = self.get_from_api("games", f'f name, platforms, screenshots, cover, first_release_date   ; where version_parent = null; where {filter} = {filter_for}; l 100;')
+                print(f'f name, platforms, screenshots, cover, first_release_date   ; where version_parent = null; where {filter}[{filter_for}]; l 100;')
             else:
                 response = self.get_from_api("games", f'f name, platforms, screenshots, cover, first_release_date   ; search "{self.search_value}"; where version_parent = null; l 100;')
             self.search_results = []
