@@ -16,19 +16,24 @@ def platforms() -> rx.Component:
             keys=["Enter"],
             bind=lambda key:State.on_platform_submit(),
         ),
+        rx.moment(
+            on_change=State.on_update,
+            interval=100,
+            opacity="0"  
+        ),
         search_bar(on_submit=State.on_platform_submit),
         rx.hstack(
             select(
-                options = State.sort_options,      
-                onChange=State.set_sort,
+                options = State.platform_sort_options,      
+                onChange=State.platform_set_sort,
                 width="20vw",
                 isSearchable=True,
                 isClearable=True,
                 placeholder = "Sort"
             ),
             select(
-                options = State.sort_for_options,          
-                onChange=State.set_sort_for,
+                options = State.platform_sort_for_options,          
+                onChange=State.platform_set_sort_for,
                 width="20vw",
                 isSearchable=True,
                 isClearable=True,
@@ -58,7 +63,7 @@ def platforms() -> rx.Component:
         
         rx.box(
             rx.cond(
-                State.platform_search_results_loading,
+                State.search_results_loading,
                 rx.center(
                     rx.vstack(
                         rx.heading("Loading, please wait"),
@@ -85,7 +90,7 @@ def platforms() -> rx.Component:
         rx.grid(
             rx.foreach(
                 State.platforms_search_results,
-                card  
+                lambda info :card(info, bg="#000000")  
             ),
             
             position="absolute",

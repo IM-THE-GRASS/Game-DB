@@ -65,15 +65,21 @@ def index() -> rx.Component:
         
         rx.box(
             rx.hstack(
-                rx.image(
-                    width="7.6vw",
-                    height="6.3vh",
-                    src="/gamechip.svg"
+                rx.link(
+                    rx.image(
+                        width="7.6vw",
+                        height="6.3vh",
+                        src="/gamechip.svg"
+                    ),
+                    href="/search"
                 ),
-                rx.image(
-                    width="7.6vw",
-                    height="6.3vh",
-                    src="/consolechip.svg"
+                rx.link(
+                    rx.image(
+                        width="7.6vw",
+                        height="6.3vh",
+                        src="/consolechip.svg"
+                    ),
+                    href="/platforms"
                 ),
                 rx.image(
                     width="7.6vw",

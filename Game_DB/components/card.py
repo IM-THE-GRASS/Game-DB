@@ -1,6 +1,6 @@
 import reflex as rx
 
-def card(info):
+def card(info, **kwargs):
     return rx.vstack(
         rx.image(
             src=info["img"],
@@ -31,5 +31,6 @@ def card(info):
         width="12.5vw",
         height="48vh",
         border="0.109vh solid #444444",
-        border_radius="8px"
+        border_radius="8px",
+        **kwargs
     )

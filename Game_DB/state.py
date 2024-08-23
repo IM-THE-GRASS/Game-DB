@@ -359,14 +359,65 @@ class State(rx.State):
         
         
     # platform stuff
-    platform_search_results_loading:bool
+    search_results_loading:bool
     platforms_search_results:list[dict[str,str]]
+    # ideas
+    # generation
+    # alphabetical
+    # family
+    
+    platform_sort_options:list = [
+        {
+            "value":"generation",
+            "label":"Generation" 
+        },
+        {
+            "value":"name",
+            "label":"Alphabetical"
+        }
+    ]
+    platform_sort_for_options:list[dict[str,str]] = [
+        {
+            "value":"asc",
+            "label":"Ascending"
+        },
+        {
+            "value":"desc",
+            "label":"Decending",
+        }
+    ]
+    def platform_set_sort_for(self, new):
+        try:
+            self.sort_for = new["value"]
+            self.on_platform_submit()
+        except:
+            self.sort_for = ""
+        
+    def platform_set_sort(self, new):
+        try:
+            self.sort = new["value"]
+            self.sort_for_disabled = False
+            # self.sort_for_options = self.sort_fors[new["label"]]
+            if self.sort_for:
+                self.on_platform_submit()
+        except:
+            # this runs if thething is none
+            self.sort_for_disabled = True
+            self.sort = ""
+            time.sleep(1)
     def on_platform_submit(self):
         print("AAAAAAAAAAAAAAAAAAAAAAAAAA")
-        self.get_platform_search_results()
-    def get_platform_search_results(self, sort:str = "", sort_for:str = "", filter = "", filter_for = ""):
+        if self.sort and self.sort_for:
+            self.platform_get_search_results(self.sort, self.sort_for)
+        else:
+            self.platform_get_search_results()
+            
+    def platform_get_search_results(self, sort:str = "", sort_for:str = ""):
         def mains():
-            response = self.get_from_api("platforms", f'f *   ; search "{self.search_value}"; l 100;')
+            if sort and sort_for:
+                response = self.get_from_api("platforms", f'f *   ; sort {sort} {sort_for}; l 100;')
+            else:
+                response = self.get_from_api("platforms", f'f *   ; search "{self.search_value}"; l 100;')
             self.platforms_search_results = []
             self.loading = True
             for result in response:
