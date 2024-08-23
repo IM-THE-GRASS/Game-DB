@@ -2,25 +2,21 @@ import reflex as rx
 from Game_DB.state import State
 from Game_DB.components.keybind import Keybind
 from Game_DB.components.select import select
-from Game_DB.components.searchbar import search_bar
 from Game_DB.components.card import card
+from Game_DB.components.searchbar import search_bar
 from reflex_lottiefiles import LottieFiles
 
 
 
-@rx.page(on_load=State.on_load)
-def search() -> rx.Component:
+@rx.page()
+def platforms() -> rx.Component:
     return rx.box(
         Keybind(
             
             keys=["Enter"],
-            bind=lambda key:State.submit_search2(),
+            bind=lambda key:State.on_platform_submit(),
         ),
-        rx.moment(
-            on_change=State.on_update,
-            interval=100,
-            opacity="0"  
-        ),
+        search_bar(on_submit=State.on_platform_submit),
         rx.hstack(
             select(
                 options = State.sort_options,      
@@ -38,24 +34,6 @@ def search() -> rx.Component:
                 isClearable=True,
                 isDisabled=State.sort_for_disabled,
                 placeholder="Sort for"
-                
-            ),
-            select(
-                options = State.filter_options,      
-                onChange=State.set_filter,
-                width="20vw",
-                isSearchable=True,
-                isClearable=True,
-                placeholder = "Filter"
-            ),
-            select(
-                options = State.filter_for_options,          
-                onChange=State.set_filter_for,
-                width="20vw",
-                isSearchable=True,
-                isClearable=True,
-                isDisabled=State.filter_for_disabled,
-                placeholder="Filter for"
                 
             ),
             position="absolute",
@@ -77,10 +55,10 @@ def search() -> rx.Component:
             href="/"
         ),
         
-        search_bar(),
+        
         rx.box(
             rx.cond(
-                State.search_results_loading,
+                State.platform_search_results_loading,
                 rx.center(
                     rx.vstack(
                         rx.heading("Loading, please wait"),
@@ -106,7 +84,7 @@ def search() -> rx.Component:
         ),
         rx.grid(
             rx.foreach(
-                State.search_results,
+                State.platforms_search_results,
                 card  
             ),
             

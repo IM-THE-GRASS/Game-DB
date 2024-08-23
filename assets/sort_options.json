@@ -6047,10 +6047,6 @@
     ],
     "Player Perspective": [
         {
-            "value": 2,
-            "label": "Third person"
-        },
-        {
             "value": 3,
             "label": "Bird view / Isometric"
         },
@@ -6073,6 +6069,10 @@
         {
             "value": 1,
             "label": "First person"
+        },
+        {
+            "value": 2,
+            "label": "Third person"
         }
     ],
     "Theme": [
@@ -14817,10 +14817,6 @@
     ],
     "Game mode": [
         {
-            "value": 2,
-            "label": "Multiplayer"
-        },
-        {
             "value": 3,
             "label": "Co-operative"
         },
@@ -14839,6 +14835,10 @@
         {
             "value": 1,
             "label": "Single player"
+        },
+        {
+            "value": 2,
+            "label": "Multiplayer"
         }
     ]
 }

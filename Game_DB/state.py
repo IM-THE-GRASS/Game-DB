@@ -356,3 +356,49 @@ class State(rx.State):
         thread = threading.Thread(target=mains)
         thread.start()
         
+        
+        
+    # platform stuff
+    platform_search_results_loading:bool
+    platforms_search_results:list[dict[str,str]]
+    def on_platform_submit(self):
+        print("AAAAAAAAAAAAAAAAAAAAAAAAAA")
+        self.get_platform_search_results()
+    def get_platform_search_results(self, sort:str = "", sort_for:str = "", filter = "", filter_for = ""):
+        def mains():
+            response = self.get_from_api("platforms", f'f *   ; search "{self.search_value}"; l 100;')
+            self.platforms_search_results = []
+            self.loading = True
+            for result in response:
+                if self.stop_thread:
+                    return
+                try:
+                    cover_response = self.get_from_api("platform_logos", f"f *; where id = {result['platform_logo']};")
+                    url = "https:" + cover_response[0]["url"]
+                    url = url.replace("thumb", "cover_big_2x")
+                    if url == "":
+                        raise Exception()
+                except:
+                    try:
+                        cover_response = self.get_from_api("platform_logos", f"f *; where id = {result['platform_logo']};")
+                        url = "https:" + cover_response[0]["url"]
+                        print(result["name"], " IS SECOND AT")
+                    except:
+                        try:print(result["name"], "FAILED")
+                        except:
+                            print(result)
+                            break
+                        pass
+                try:
+                    result["img"] = url
+                    url = ""
+                except:pass
+                self.platforms_search_results.append(result)
+                print(result, "RESULT   ")
+            self.loading = False
+        self.stop_thread = True
+        self.loading = True
+        time.sleep(1)
+        self.stop_thread = False
+        thread = threading.Thread(target=mains)
+        thread.start()
