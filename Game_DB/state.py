@@ -25,6 +25,12 @@ class State(rx.State):
     search_results:list[dict[str, str]] = []
     search_results_loading:bool = False
     
+    def int(self, info, number):
+        if int(info["aggregated_rating"]) >= number:
+            return True
+        else:
+            return False
+    
     @rx.var()
     def search_disabled(self) -> bool:
         return self.sort or self.sort_for
@@ -105,6 +111,7 @@ class State(rx.State):
     
     def fix_thing(to_fix):
         for thing in to_fix:
+            print(thing)
             thing["value"] = thing["id"]
             thing.pop("id")
             thing["label"] = thing["name"]
@@ -298,14 +305,14 @@ class State(rx.State):
         def mains():
             if sort and sort_for:
                 if filter and filter_for:
-                    response = self.get_from_api("games", f'f name, platforms, screenshots, cover, first_release_date   ; where version_parent = null; l 100; where {filter} = {filter_for}; sort {sort} {sort_for};')    
+                    response = self.get_from_api("games", f'f *   ; where version_parent = null; l 100; where {filter} = {filter_for}; sort {sort} {sort_for};')    
                 else:
-                    response = self.get_from_api("games", f'f name, platforms, screenshots, cover, first_release_date   ; where version_parent = null; l 100; sort {sort} {sort_for};')
+                    response = self.get_from_api("games", f'f *   ; where version_parent = null; l 100; sort {sort} {sort_for};')
             elif filter and filter_for:
-                response = self.get_from_api("games", f'f name, platforms, screenshots, cover, first_release_date   ; search "{self.search_value}"; where version_parent = null; where {filter} = {filter_for}; l 100;')
-                print(f'f name, platforms, screenshots, cover, first_release_date   ; where version_parent = null; where {filter}[{filter_for}]; l 100;')
+                response = self.get_from_api("games", f'f *   ; search "{self.search_value}"; where version_parent = null; where {filter} = {filter_for}; l 100;')
+                print(f'f *   ; where version_parent = null; where {filter}[{filter_for}]; l 100;')
             else:
-                response = self.get_from_api("games", f'f name, platforms, screenshots, cover, first_release_date   ; search "{self.search_value}"; where version_parent = null; l 100;')
+                response = self.get_from_api("games", f'f *   ; search "{self.search_value}"; where version_parent = null; l 100;')
             self.search_results = []
             self.loading = True
             for result in response:
@@ -347,6 +354,7 @@ class State(rx.State):
                     result["img"] = url
                     url = ""
                 except:pass
+                
                 self.search_results.append(result)
             self.loading = False
         self.stop_thread = True
@@ -356,7 +364,16 @@ class State(rx.State):
         thread = threading.Thread(target=mains)
         thread.start()
         
-        
+    def get_screenshots(self, screenshot_ids):
+        try:
+            screenshots = []
+            for screenshot in screenshot_ids:
+                ss_response = self.get_from_api("screenshots", f"f *; where id = {screenshot};")
+                ss_url = "https:" + ss_response[0]["url"]
+                screenshots.append(ss_url)
+            return screenshots
+            print(screenshots)
+        except:pass   
         
     # platform stuff
     search_results_loading:bool

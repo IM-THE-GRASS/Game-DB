@@ -1,5 +1,6 @@
 import reflex as rx
 from Game_DB.components.carousel import Slider
+from Game_DB.state import State
 def card(info, **kwargs):
     return rx.dialog.root(
         rx.dialog.trigger(
@@ -51,62 +52,46 @@ def card(info, **kwargs):
                     
                     ),
                     rx.box(
-                        Slider(
-                            rx.image(
-                                src=info["img"],
-                                height="30vh",
-                                width="25vw",
-                                object_fit="contain"
-                            ),
-                            rx.image(
-                                src=info["img"],
-                                width="25vw",
-                                height="30vh",
-                                
-                                object_fit="contain"
-                            ),
-                            rx.image(
-                                src=info["img"],
-                                width="25vw",
-                                height="30vh",
-                                object_fit="contain"
-                            ),
-                            rx.image(
-                                src=info["img"],
-                                width="25vw",
-                                height="30vh",
-                                object_fit="contain"
-                            ),
-                            rx.image(
-                                src=info["img"],
-                                width="25vw",
-                                height="30vh",
-                                object_fit="contain"
-                            ),
-                            rx.image(
-                                src=info["img"],
-                                width="25vw",
-                                height="30vh",
-                                object_fit="contain"
-                            ),
-                            width="20vw",
-                            showDots=True
+                        
+                        rx.text(
+                            info["summary"]  
                         ),
-                        height="30vh"
+                        height="30vh",
+                        overflow="hidden"
                     ),
-                    rx.hstack(
+                    rx.link(
                         rx.icon("globe"),
-                        rx.text("Site")
+                        href=info["url"]
                     ),
+                    
                     rx.hstack(
-                        rx.icon("star"),
-                        rx.icon("star"),
-                        rx.icon("star"),
-                        rx.icon("star", color="gray"),
-                        rx.icon("star", color="gray"),
-                        rx.text("(100)", color_scheme="gray")
+                        rx.cond(
+                            State.int(info, 1),
+                            rx.icon("star"),
+                            rx.icon("star", color="gray"),
+                        ),
+                        rx.cond(
+                            State.int(info, 2),
+                            rx.icon("star"),
+                            rx.icon("star", color="gray"),
+                        ),
+                        rx.cond(
+                            State.int(info, 3),
+                            rx.icon("star"),
+                            rx.icon("star", color="gray"),
+                        ),
+                        rx.cond(
+                            State.int(info, 4),
+                            rx.icon("star"),
+                            rx.icon("star", color="gray"),
+                        ),
+                        rx.cond(
+                            State.int(info, 5),
+                            rx.icon("star"),
+                            rx.icon("star", color="gray"),
+                        ),
+                        rx.text(info['aggregated_rating_count'], color_scheme="gray")
                     ),
-                    rx.dialog.description(info["summary"]),
                 )
             )
             

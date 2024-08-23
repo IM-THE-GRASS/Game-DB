@@ -81,20 +81,19 @@ def index() -> rx.Component:
                     ),
                     href="/platforms"
                 ),
-                rx.image(
-                    width="7.6vw",
-                    height="6.3vh",
-                    src="/eventchip.svg"
-                ) ,
-                rx.image(
-                    width="7.6vw",
-                    height="6.3vh",
-                    src="/characterchip.svg"
-                ) 
+                rx.link(
+                    rx.image(
+                        width="7.6vw",
+                        height="6.3vh",
+                        src="/characterchip.svg"
+                    ),
+                    href="/characters" 
+                )
+                
             ),
             position="absolute",
             top="57.345vh",
-            left="33.75vw",
+            left="32.6vw",
             width="32vw",
             height="6.3vh"
         ),
