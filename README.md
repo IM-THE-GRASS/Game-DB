@@ -1,5 +1,4 @@
 # Game DB
-### link to site: https://openstream.thegrass.xyz/
 
 A site built in [Reflex](https://reflex.dev) that uses the [IGDB](https://igdb.com) api for searching through practically all characters, games and consoles.
 
