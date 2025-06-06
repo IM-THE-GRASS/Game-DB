@@ -3,7 +3,7 @@
 A site built in [Reflex](https://reflex.dev) that uses the [IGDB](https://igdb.com) api for searching through practically all characters, games and consoles.
 
 
-
+<br>
 
 ### Self hosting:
 To self host and for developmentyou need python 3.11 or above[^1] 
